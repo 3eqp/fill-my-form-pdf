@@ -3,28 +3,30 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Upload, X, FileImage } from "lucide-react";
 import { toast } from "sonner";
+import { translations, Language } from "@/i18n/translations";
 
 interface ReceiptUploadProps {
   receipts: File[];
   onChange: (receipts: File[]) => void;
+  language?: Language;
 }
 
-export const ReceiptUpload = ({ receipts, onChange }: ReceiptUploadProps) => {
+export const ReceiptUpload = ({ receipts, onChange, language = 'ru' }: ReceiptUploadProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const t = translations[language];
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     const validFiles = files.filter(file => {
       const isValid = file.type.startsWith("image/") || file.type === "application/pdf";
       if (!isValid) {
-        toast.error(`Файл ${file.name} имеет неверный формат. Допускаются только изображения и PDF.`);
+        toast.error(t.invalidFileType);
       }
       return isValid;
     });
     
     if (validFiles.length > 0) {
       onChange([...receipts, ...validFiles]);
-      toast.success(`Добавлено файлов: ${validFiles.length}`);
     }
     
     if (fileInputRef.current) {
@@ -34,12 +36,11 @@ export const ReceiptUpload = ({ receipts, onChange }: ReceiptUploadProps) => {
 
   const removeReceipt = (index: number) => {
     onChange(receipts.filter((_, i) => i !== index));
-    toast.info("Файл удален");
   };
 
   return (
     <div className="space-y-3">
-      <Label className="text-sm font-medium text-foreground">Чеки (изображения или PDF)</Label>
+      <Label className="text-sm font-medium text-foreground">{t.uploadReceipts}</Label>
       
       <div className="flex gap-2">
         <Button
@@ -49,7 +50,7 @@ export const ReceiptUpload = ({ receipts, onChange }: ReceiptUploadProps) => {
           className="flex-1"
         >
           <Upload className="h-4 w-4 mr-2" />
-          Добавить чек
+          {t.uploadDescription}
         </Button>
         <input
           ref={fileInputRef}

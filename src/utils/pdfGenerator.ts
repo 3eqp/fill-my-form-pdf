@@ -8,8 +8,7 @@ export interface FormData {
   departmentName: string;
   basedOn: string;
   amountInWords: string;
-  cashier: string;
-  cashierSignature: string;
+  recipientSignature: string;
 }
 
 const loadImageAsDataURL = (file: File): Promise<string> => {
@@ -141,19 +140,23 @@ export const generatePDF = async (formData: FormData, receipts: File[]): Promise
 
   yPos += 12;
 
-  // Cashier and signature
-  doc.text("Kasjer:", margin, yPos);
-  doc.line(margin + 15, yPos + 1, margin + 80, yPos + 1);
-  doc.text(formData.cashier, margin + 16, yPos);
-
-  doc.text("Podpis kasjera:", margin + 90, yPos);
-  doc.line(margin + 120, yPos + 1, pageWidth - margin, yPos + 1);
+  // Cashier and recipient signature boxes
+  const signatureBoxWidth = 70;
+  const signatureBoxHeight = 20;
   
-  if (formData.cashierSignature) {
+  // Podpis kasjera (left side - empty box)
+  doc.text("Podpis kasjera:", margin, yPos);
+  doc.rect(margin, yPos + 2, signatureBoxWidth, signatureBoxHeight);
+
+  // Podpis odbiorcy (right side - with signature if provided)
+  doc.text("Podpis odbiorcy:", margin + 90, yPos);
+  doc.rect(margin + 90, yPos + 2, signatureBoxWidth, signatureBoxHeight);
+  
+  if (formData.recipientSignature) {
     try {
-      doc.addImage(formData.cashierSignature, "PNG", margin + 120, yPos - 8, 70, 12);
+      doc.addImage(formData.recipientSignature, "PNG", margin + 92, yPos + 4, signatureBoxWidth - 4, signatureBoxHeight - 4);
     } catch (e) {
-      console.error("Error adding cashier signature:", e);
+      console.error("Error adding recipient signature:", e);
     }
   }
 
