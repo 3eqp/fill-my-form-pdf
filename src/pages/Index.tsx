@@ -4,11 +4,14 @@ import { Card } from "@/components/ui/card";
 import { FormField } from "@/components/FormField";
 import { SignatureCanvasComponent } from "@/components/SignatureCanvas";
 import { ReceiptUpload } from "@/components/ReceiptUpload";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { generatePDF, FormData } from "@/utils/pdfGenerator";
 import { FileDown, FileText } from "lucide-react";
 import { toast } from "sonner";
+import { translations, Language } from "@/i18n/translations";
 
 const Index = () => {
+  const [language, setLanguage] = useState<Language>('ru');
   const [formData, setFormData] = useState<FormData>({
     date: "",
     amount: "",
@@ -17,12 +20,13 @@ const Index = () => {
     departmentName: "",
     basedOn: "",
     amountInWords: "",
-    cashier: "",
-    cashierSignature: "",
+    recipientSignature: "",
   });
 
   const [receipts, setReceipts] = useState<File[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
+  
+  const t = translations[language];
 
   const updateField = (field: keyof FormData) => (value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -31,17 +35,17 @@ const Index = () => {
   const handleGeneratePDF = async () => {
     // Validation
     if (!formData.date || !formData.amount || !formData.issuedTo) {
-      toast.error("Пожалуйста, заполните обязательные поля: Дата, Сумма, Выдано");
+      toast.error(t.validationError);
       return;
     }
 
     setIsGenerating(true);
     try {
       await generatePDF(formData, receipts);
-      toast.success("PDF успешно сгенерирован!");
+      toast.success(t.successMessage);
     } catch (error) {
       console.error("Error generating PDF:", error);
-      toast.error("Ошибка при генерации PDF");
+      toast.error(t.errorMessage);
     } finally {
       setIsGenerating(false);
     }
@@ -52,14 +56,20 @@ const Index = () => {
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <FileText className="h-8 w-8 text-document-header" />
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex-1"></div>
+            <div className="flex items-center gap-2">
+              <FileText className="h-8 w-8 text-document-header" />
+            </div>
+            <div className="flex-1 flex justify-end">
+              <LanguageSwitcher currentLanguage={language} onLanguageChange={setLanguage} />
+            </div>
           </div>
           <h1 className="text-3xl font-bold text-document-header">
-            Generator Dowód wypłaty
+            {t.title}
           </h1>
           <p className="text-muted-foreground">
-            ZBÓR CHRZEŚCIJAN BAPTYSTÓW «BOŻA ŁASKA» W WARSZAWIE
+            {t.church}
           </p>
         </div>
 
@@ -112,31 +122,25 @@ const Index = () => {
 
           {/* Amount in Words */}
           <FormField
-            label="Kwota słownie"
+            label={t.amountInWords}
             value={formData.amountInWords}
             onChange={updateField("amountInWords")}
             multiline
             rows={3}
           />
 
-          {/* Cashier */}
-          <FormField
-            label="Kasjer"
-            value={formData.cashier}
-            onChange={updateField("cashier")}
-          />
-
-          {/* Signature */}
+          {/* Recipient Signature */}
           <div className="pt-4">
             <SignatureCanvasComponent
-              label="Podpis kasjera"
-              onChange={updateField("cashierSignature")}
+              label={t.recipientSignature}
+              onChange={updateField("recipientSignature")}
+              language={language}
             />
           </div>
 
           {/* Receipt Upload */}
           <div className="pt-4 border-t border-border">
-            <ReceiptUpload receipts={receipts} onChange={setReceipts} />
+            <ReceiptUpload receipts={receipts} onChange={setReceipts} language={language} />
           </div>
 
           {/* Generate Button */}
@@ -148,15 +152,15 @@ const Index = () => {
               className="gap-2"
             >
               <FileDown className="h-5 w-5" />
-              {isGenerating ? "Генерация..." : "Сгенерировать PDF"}
+              {isGenerating ? t.generating : t.generatePDF}
             </Button>
           </div>
         </Card>
 
         {/* Info Footer */}
         <div className="text-center text-sm text-muted-foreground">
-          <p>* Обязательные поля для заполнения</p>
-          <p className="mt-1">Сгенерированный PDF будет содержать заполненную форму и все добавленные чеки</p>
+          <p>{t.requiredFields}</p>
+          <p className="mt-1">{t.pdfInfo}</p>
         </div>
       </div>
     </div>

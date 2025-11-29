@@ -1,16 +1,19 @@
-import { useRef, useEffect } from "react";
+import { useRef } from "react";
 import SignatureCanvas from "react-signature-canvas";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Eraser } from "lucide-react";
+import { translations, Language } from "@/i18n/translations";
 
 interface SignatureCanvasComponentProps {
   label: string;
   onChange: (signature: string) => void;
+  language?: Language;
 }
 
-export const SignatureCanvasComponent = ({ label, onChange }: SignatureCanvasComponentProps) => {
+export const SignatureCanvasComponent = ({ label, onChange, language = 'ru' }: SignatureCanvasComponentProps) => {
   const sigCanvas = useRef<SignatureCanvas>(null);
+  const t = translations[language];
 
   const clear = () => {
     sigCanvas.current?.clear();
@@ -36,7 +39,7 @@ export const SignatureCanvasComponent = ({ label, onChange }: SignatureCanvasCom
           className="h-8 px-2"
         >
           <Eraser className="h-4 w-4 mr-1" />
-          Очистить
+          {t.clear}
         </Button>
       </div>
       <div className="border-2 border-signature-border rounded-md bg-white overflow-hidden">
