@@ -10,7 +10,6 @@ export interface FormData {
   amountInWords: string;
   cashier: string;
   cashierSignature: string;
-  recipientSignature: string;
 }
 
 const loadImageAsDataURL = (file: File): Promise<string> => {
@@ -155,20 +154,6 @@ export const generatePDF = async (formData: FormData, receipts: File[]): Promise
       doc.addImage(formData.cashierSignature, "PNG", margin + 120, yPos - 8, 70, 12);
     } catch (e) {
       console.error("Error adding cashier signature:", e);
-    }
-  }
-
-  yPos += 15;
-
-  // Recipient signature box
-  doc.text("Podpis odbiorcy:", margin, yPos);
-  doc.rect(margin, yPos + 2, contentWidth, 30);
-  
-  if (formData.recipientSignature) {
-    try {
-      doc.addImage(formData.recipientSignature, "PNG", margin + 5, yPos + 7, contentWidth - 10, 20);
-    } catch (e) {
-      console.error("Error adding recipient signature:", e);
     }
   }
 
