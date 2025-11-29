@@ -17,14 +17,14 @@ export const ReceiptUpload = ({ receipts, onChange }: ReceiptUploadProps) => {
     const validFiles = files.filter(file => {
       const isValid = file.type.startsWith("image/") || file.type === "application/pdf";
       if (!isValid) {
-        toast.error(`Файл ${file.name} має невірний формат. Дозволені тільки зображення та PDF.`);
+        toast.error(`Файл ${file.name} имеет неверный формат. Допускаются только изображения и PDF.`);
       }
       return isValid;
     });
     
     if (validFiles.length > 0) {
       onChange([...receipts, ...validFiles]);
-      toast.success(`Додано файлів: ${validFiles.length}`);
+      toast.success(`Добавлено файлов: ${validFiles.length}`);
     }
     
     if (fileInputRef.current) {
@@ -34,12 +34,12 @@ export const ReceiptUpload = ({ receipts, onChange }: ReceiptUploadProps) => {
 
   const removeReceipt = (index: number) => {
     onChange(receipts.filter((_, i) => i !== index));
-    toast.info("Файл видалено");
+    toast.info("Файл удален");
   };
 
   return (
     <div className="space-y-3">
-      <Label className="text-sm font-medium text-foreground">Чеки (зображення або PDF)</Label>
+      <Label className="text-sm font-medium text-foreground">Чеки (изображения или PDF)</Label>
       
       <div className="flex gap-2">
         <Button
@@ -49,7 +49,7 @@ export const ReceiptUpload = ({ receipts, onChange }: ReceiptUploadProps) => {
           className="flex-1"
         >
           <Upload className="h-4 w-4 mr-2" />
-          Додати чек
+          Добавить чек
         </Button>
         <input
           ref={fileInputRef}

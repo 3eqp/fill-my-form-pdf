@@ -39,7 +39,7 @@ export const SignatureCanvasComponent = ({ label, onChange }: SignatureCanvasCom
           Очистить
         </Button>
       </div>
-      <div className="border-2 border-signature-border rounded-md bg-card overflow-hidden">
+      <div className="border-2 border-signature-border rounded-md bg-white overflow-hidden">
         <SignatureCanvas
           ref={sigCanvas}
           onEnd={handleEnd}
@@ -47,8 +47,8 @@ export const SignatureCanvasComponent = ({ label, onChange }: SignatureCanvasCom
             className: "w-full h-32 cursor-crosshair",
             style: { touchAction: "none" }
           }}
-          backgroundColor="hsl(var(--card))"
-          penColor="hsl(var(--foreground))"
+          backgroundColor="#ffffff"
+          penColor="#000000"
         />
       </div>
     </div>

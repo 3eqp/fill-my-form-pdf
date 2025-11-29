@@ -19,7 +19,6 @@ const Index = () => {
     amountInWords: "",
     cashier: "",
     cashierSignature: "",
-    recipientSignature: "",
   });
 
   const [receipts, setReceipts] = useState<File[]>([]);
@@ -32,17 +31,17 @@ const Index = () => {
   const handleGeneratePDF = async () => {
     // Validation
     if (!formData.date || !formData.amount || !formData.issuedTo) {
-      toast.error("Будь ласка, заповніть обов'язкові поля: Дата, Сума, Видано");
+      toast.error("Пожалуйста, заполните обязательные поля: Дата, Сумма, Выдано");
       return;
     }
 
     setIsGenerating(true);
     try {
       await generatePDF(formData, receipts);
-      toast.success("PDF успішно згенеровано!");
+      toast.success("PDF успешно сгенерирован!");
     } catch (error) {
       console.error("Error generating PDF:", error);
-      toast.error("Помилка при генерації PDF");
+      toast.error("Ошибка при генерации PDF");
     } finally {
       setIsGenerating(false);
     }
@@ -127,15 +126,11 @@ const Index = () => {
             onChange={updateField("cashier")}
           />
 
-          {/* Signatures */}
-          <div className="grid md:grid-cols-2 gap-6 pt-4">
+          {/* Signature */}
+          <div className="pt-4">
             <SignatureCanvasComponent
               label="Podpis kasjera"
               onChange={updateField("cashierSignature")}
-            />
-            <SignatureCanvasComponent
-              label="Podpis odbiorcy"
-              onChange={updateField("recipientSignature")}
             />
           </div>
 
@@ -153,15 +148,15 @@ const Index = () => {
               className="gap-2"
             >
               <FileDown className="h-5 w-5" />
-              {isGenerating ? "Генерація..." : "Згенерувати PDF"}
+              {isGenerating ? "Генерация..." : "Сгенерировать PDF"}
             </Button>
           </div>
         </Card>
 
         {/* Info Footer */}
         <div className="text-center text-sm text-muted-foreground">
-          <p>* Обов'язкові поля для заповнення</p>
-          <p className="mt-1">Згенерований PDF буде містити заповнену форму та всі додані чеки</p>
+          <p>* Обязательные поля для заполнения</p>
+          <p className="mt-1">Сгенерированный PDF будет содержать заполненную форму и все добавленные чеки</p>
         </div>
       </div>
     </div>
